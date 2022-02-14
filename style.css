@@ -52,6 +52,7 @@ h3{
   
 }
 
+
 .gameBoard{
   margin:auto;
   margin-bottom:3rem;
@@ -66,6 +67,16 @@ h3{
  box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2); 
 
 }
+
+.Xmark{
+  color:#cd5c5c;
+  color:#e51a4c;
+}
+
+.Omark{
+  color:#008080;
+}
+
 
 .cell{
   display:flex;
@@ -82,7 +93,12 @@ box-shadow: 5px 5px 14px #c9cfe3, -5px -5px 14px #d9e1f5; */
     -webkit-backdrop-filter: blur(10px); /* Safari 9+ */
     backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.3);
+    transition:.5s;
   
+}
+
+.cell:hover{
+  background-color: rgba(255,255,255,0.5);
 }
 
 .messageBox{
@@ -111,6 +127,13 @@ background: -webkit-linear-gradient(to right, #F45C43, #EB3349);  /* Chrome 10-2
 background: linear-gradient(to right, #F45C43, #EB3349); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 color:white;
 border:2px solid white;
+transition:.4s;
+}
+.reset:hover{
+background: #daae51;
+}
+.reset:active{
+transform: translateY(.5rem);
 }
 .hidden{
   display:none;
@@ -121,3 +144,24 @@ border:2px solid white;
   background: -webkit-linear-gradient(to right, #ff5f6d, #ffc371); /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to right, #ff5f6d, #ffc371); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
+
+.winner{
+  background-color: aquamarine;
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  }
+  @-webkit-keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+  }
+  @keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+  } 
