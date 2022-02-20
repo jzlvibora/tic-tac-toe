@@ -1,6 +1,6 @@
 //player factory
-function PlayerFactory(name, marker) {
-    return { name, marker }
+function PlayerFactory(name,marker) {
+    return {name,marker}
 }
 
 //create players
@@ -12,22 +12,24 @@ const BoardController = (function () {
     let isPlaying = true;
     let activePlayer = playerX.marker;
     let board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  
     return {
         board,
         activePlayer,
         isPlaying,
         updateBoard: function (id) {
-            BoardController.board.splice(Number(id), 1, BoardController.activePlayer);
+         BoardController.board.splice(Number(id), 1, BoardController.activePlayer);
         },
         resetBoard: function () {
-            BoardController.board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        },
-        resetIsPlaying: function () {
-            BoardController.isPlaying = true;
-        },
-        resetActivePlayer: function () {
-            activePlayer = playerX.marker;
-        }
+          BoardController.board = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+          BoardController.isPlaying = true;
+          BoardController.activePlayer = playerX.marker;
+          UIController.resetCellState();
+          document.querySelectorAll(UIController.UISelectors.cell).forEach((cell)=>{
+            cell.classList.remove('Xmark');
+            cell.classList.remove('Omark');
+        })
+    }
     }
 })()
 
@@ -54,16 +56,24 @@ const UIController = (function () {
         resetCellState: function () {
             document.querySelectorAll(UISelectors.cell).forEach((cell) => {
                 cell.dataset.state = '';
-                cell.classList.remove('Xmark');
-                cell.classList.remove('Omark');
+                cell.classList.remove();
+                
             })
         },
         resetBoardDisplay: function () {
             document.querySelectorAll(UISelectors.cell).forEach((cell) => {
                 cell.textContent = '';
             document.querySelector(UISelectors.messageBox).classList.add('hidden');
+              UIController.switchIndicator();
             })
-        }
+        },
+      gameOverMessageDisplay(result){
+        if(result==="winner") document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
+        if(result==="draw") document.querySelector(UISelectors.messageBox).textContent = `It's a draw`;
+          document.querySelector(UISelectors.messageBox).classList.remove('hidden');
+          BoardController.isPlaying = false;
+            
+      }
 
 
     }
@@ -72,65 +82,26 @@ const UIController = (function () {
 
 //Game controller
 const GameController = (function () {
+  
     const UISelectors = UIController.UISelectors;
     const winCheck = function () {
-
-        if (BoardController.board[0] == BoardController.board[1] && BoardController.board[0] == BoardController.board[2]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (BoardController.board[3] === BoardController.board[4] && BoardController.board[3] === BoardController.board[5]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (BoardController.board[6] === BoardController.board[7] && BoardController.board[6] === BoardController.board[8]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (BoardController.board[0] === BoardController.board[3] && BoardController.board[0] === BoardController.board[6]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-
-        }
-        if (BoardController.board[1] === BoardController.board[4] && BoardController.board[1] === BoardController.board[7]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (BoardController.board[2] === BoardController.board[5] && BoardController.board[2] === BoardController.board[8]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (BoardController.board[0] === BoardController.board[4] && BoardController.board[0] === BoardController.board[8]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-
-        }
-        if (BoardController.board[2] === BoardController.board[4] && BoardController.board[2] === BoardController.board[6]) {
-            document.querySelector(UISelectors.messageBox).textContent = `Player ${BoardController.activePlayer} Wins!`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
-        if (drawCheck(BoardController.board) === true) {
-            document.querySelector(UISelectors.messageBox).textContent = `Draw`;
-            document.querySelector(UISelectors.messageBox).classList.remove('hidden');
-            BoardController.isPlaying = false;
-            return;
-        }
+    const winningCombinations = [
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+        [0,4,8],
+        [2,4,6],
+    ];
+        winningCombinations.forEach((item, index) => { 
+            if (BoardController.board[item[0]] === BoardController.activePlayer && BoardController.board[item[1]] === BoardController.activePlayer && BoardController.board[item[2]] === BoardController.activePlayer)  
+              return UIController.gameOverMessageDisplay('winner');
+          
+          if (drawCheck(BoardController.board) === true && BoardController.isPlaying===true) return UIController.gameOverMessageDisplay('draw');
+        
+        })
     }
 
     const drawCheck = function (board) {
@@ -139,19 +110,14 @@ const GameController = (function () {
 
     const switchPlayer = function () {
         BoardController.activePlayer = BoardController.activePlayer === playerX.marker ? playerO.marker : playerX.marker;
-        
     }
 
     return {
         gameBoardEvent: function () {
-            
             document.querySelectorAll(UISelectors.cell).forEach((cell) => {
-                
                 cell.addEventListener('click', function () {
-                    if (!BoardController.isPlaying) return;
-                    console.log(BoardController.board,BoardController.isPlaying);
-                    if (cell.dataset.state === 'selected') return;
-                    cell.classList.add(`${BoardController.activePlayer}mark`);
+                    if (!BoardController.isPlaying || cell.dataset.state === 'selected') return;
+                    cell.classList.add(`${BoardController.activePlayer}mark`); 
                     UIController.placeMarker(cell);
                     BoardController.updateBoard(cell.id);
                     cell.dataset.state = 'selected';
@@ -161,10 +127,7 @@ const GameController = (function () {
                 })
             })
             document.querySelector(UISelectors.resetBtn).addEventListener('click', function () {
-                
                 BoardController.resetBoard();
-                BoardController.resetIsPlaying();
-                BoardController.resetActivePlayer();
                 UIController.resetBoardDisplay();
                 UIController.resetCellState();
                
@@ -174,4 +137,3 @@ const GameController = (function () {
 })(UIController);
 
 GameController.gameBoardEvent();
-
